@@ -82,7 +82,7 @@ async function analyzeWithGemma(imgBase64) {
         ? "Describe this scene for a visually impaired person. Be concise, focus on obstacles and main objects. What's in front of me?"
         : "Read all the text visible in this image. Be very precise and maintain the original formatting as much as possible.";
 
-    const response = await fetch('/api/gemma', {
+    const response = await fetch('https://clock-captive-hybrid.ngrok-free.dev/api/gemma', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
