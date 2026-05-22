@@ -11,22 +11,26 @@ SoniSight is an inclusive, high-contrast Progressive Web App (PWA) designed to p
     - *Double Pulse*: Successful analysis.
     - *Long Pulses*: Error/Unable to see.
 - **📱 PWA Architecture**: Fully installable on mobile devices with offline support via Service Workers, ensuring accessibility wherever the user is.
-- **🎙️ Text-to-Speech (TTS)**: an integrated voice engine that narrates the scene descriptions immediately.
+- **🎙️ Text-to-Speech (TTS)**: An integrated voice engine that narrates the scene descriptions immediately.
 
 ## 🛠️ Technical Stack
 
 - **Frontend**: HTML5, CSS3 (Custom High-Contrast Theme), JavaScript (ES6+)
 - **AI Model**: Gemma 4 (Multimodal)
-- **Deployment**: Netlify (Static Hosting)
+- **Backend Bridge**: FastAPI proxy for secure API handling and CORS management.
+- **Deployment**: Netlify (Frontend) & ngrok (Backend Tunnel)
 - **PWA**: Web App Manifest & Service Workers
 
 ## 📖 How it Works
 
 1. **Capture**: The app captures a frame from the mobile device's environment camera.
-2. **Processing**: The image is sent to the Gemma 4 API with a context-aware prompt based on the active mode (Explore vs. Read).
+2. **Processing**: The image is sent to a secure FastAPI bridge, which forwards the request to the Gemma 4 API with a context-aware prompt based on the active mode (Explore vs. Read).
 3. **Output**: The model's textual description is passed to the browser's Speech Synthesis API for immediate audio feedback.
 4. **Feedback**: Concurrent haptic pulses notify the user of the system state without requiring visual or audio cues.
 
 ## 📦 Installation
 
 Since this is a PWA, simply visit the deployed URL on your mobile browser and select **"Add to Home Screen"** from the browser menu.
+
+---
+*Developed as part of the Gemma 4 Challenge. 🚀*
