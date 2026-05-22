@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoniSight - Accessibility PWA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>SoniSight</h1>
+            <div id="mode-indicator">Mode: Explore</div>
+        </header>
+
+        <main>
+            <div id="viewport">
+                <video id="camera-stream" autoplay playsinline></video>
+                <canvas id="capture-canvas" style="display:none;"></canvas>
+            </div>
+
+            <div id="controls">
+                <button id="capture-btn">Analyze Scene</button>
+                <button id="mode-toggle">Switch to Read</button>
+            </div>
+        </main>
+
+        <div id="status-bar">Ready</div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
