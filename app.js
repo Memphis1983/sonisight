@@ -31,11 +31,26 @@ function updateStatus(text) {
     elements.statusBar.innerText = text;
 }
 
+async function triggerHaptic(pattern = 'default') {
+    if (!("vibrate" in navigator)) return;
+    
+    if (pattern === 'start') {
+        navigator.vibrate(50); // Short sharp pulse
+    } else if (pattern === 'success') {
+        navigator.vibrate([100, 50, 100]); // Double pulse
+    } else if (pattern === 'error') {
+        navigator.vibrate([500, 100, 500]); // Long warning pulses
+    } else {
+        navigator.vibrate(100);
+    }
+}
+
 async function captureAndAnalyze() {
     if (state.isAnalyzing) return;
     
     state.isAnalyzing = true;
     updateStatus('Analyzing...');
+    await triggerHaptic('start');
     
     // Draw current video frame to canvas
     const context = elements.canvas.getContext('2d');
@@ -46,22 +61,40 @@ async function captureAndAnalyze() {
     const imageData = elements.canvas.toDataURL('image/jpeg');
     
     try {
-        // Placeholder for Gemma 4 API call
-        const description = await mockGemmaAnalysis(imageData);
+        const description = await analyzeWithGemma(imageData);
+        await triggerHaptic('success');
         speak(description);
         updateStatus('Analysis complete');
     } catch (err) {
+        await triggerHaptic('error');
         updateStatus('Analysis failed');
+        speak('Sorry sweetheart, I had trouble seeing that.');
+        console.error(err);
     } finally {
         state.isAnalyzing = false;
     }
 }
 
-async function mockGemmaAnalysis(img) {
-    // This will be replaced by the real API integration
-    return new Promise(resolve => {
-        setTimeout(() => resolve("I see a room with a wooden table and a laptop on it."), 1500);
+async function analyzeWithGemma(imgBase64) {
+    const base64Data = imgBase64.split(',')[1];
+    
+    const prompt = state.mode === 'explore' 
+        ? "Describe this scene for a visually impaired person. Be concise, focus on obstacles and main objects. What's in front of me?"
+        : "Read all the text visible in this image. Be very precise and maintain the original formatting as much as possible.";
+
+    const response = await fetch('/api/gemma', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            image: base64Data,
+            prompt: prompt
+        })
     });
+
+    if (!response.ok) throw new Error('API request failed');
+    
+    const data = await response.json();
+    return data.description;
 }
 
 function speak(text) {
@@ -74,6 +107,7 @@ elements.modeToggle.addEventListener('click', () => {
     state.mode = state.mode === 'explore' ? 'read' : 'explore';
     elements.modeIndicator.innerText = `Mode: ${state.mode.charAt(0).toUpperCase() + state.mode.slice(1)}`;
     updateStatus(`Switched to ${state.mode} mode`);
+    triggerHaptic(); // Pulse on mode change
 });
 
 initCamera();
